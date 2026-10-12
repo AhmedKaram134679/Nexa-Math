@@ -27,8 +27,8 @@ In the previous audit report, Section 1 stated `B. CONDITIONALLY READY — SPECI
 
 This follow-up review reconciles and clarifies that terminology:
 - **No specification text defects were discovered:** The Revision 5 specification is internally sound, mathematically rigorous, and compatible with the existing NexaMath core architecture.
-- **The condition for readiness is architectural authorization, NOT specification rework:** Implementation cannot commence until the project owner reviews and formally approves the **9 pending architectural and metrological decisions** (`DEC-11-01` through `DEC-11-09`). The specification author and auditing agent have zero authority to approve these decisions on behalf of the project owner.
-- Therefore, the status is precisely **`B. CONDITIONALLY READY`** (pending owner approval of the nine designated decision items).
+- **The condition for readiness is architectural authorization, NOT specification rework:** Implementation cannot commence until the project owner reviews and formally acts on the pending decision register items (`DEC-11-02` through `DEC-11-09`), the 1024-bit resource policy, and explicitly authorizes implementation. (Note: For `DEC-11-01`, the owner has approved Option C as architectural direction, while its 1024-bit policy remains open and implementation remains unauthorized). The specification author and auditing agent have zero authority to approve policies or authorize implementation on behalf of the project owner.
+- Therefore, the status is precisely **`B. CONDITIONALLY READY`** (pending owner approval of the remaining decisions, resource policy, and formal implementation authorization).
 
 ---
 
@@ -57,11 +57,11 @@ The following matrix provides comprehensive traceability linking every material 
 
 | Claim / Subsystem | Spec Section | Target / Existing Source File | Baseline Test Reference | Verification Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **AST Node Extension** (`UnitExpressionNode`, `ConvertedQuantityNode`) | Sec 4.1 | [ast.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/parser/ast.dart#L1) | `test/mathematical_core/parser/ast_test.dart` | **Verified against existing source code** (Base AST hierarchy verified; node classes to be extended in Phase 11). |
-| **Error Hierarchy Integration** (6 `MathError` subclasses) | Sec 4.7 | [math_error.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/errors/math_error.dart#L1) | `test/mathematical_core/errors/math_error_test.dart` | **Verified against existing source code** (All base classes, recovery suggestions, and error codes inspected). |
-| **Warning Pipeline Integration** (3 `MathWarning` subclasses) | Sec 4.8 | [math_warning.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/errors/math_warning.dart#L1) | `test/mathematical_core/errors/math_warning_test.dart` | **Verified against existing source code** (Warning emitter, listener contract, and severity levels inspected). |
-| **Evaluation Context Invariants** (Scoping, Unit Registry) | Sec 4.5 | [evaluation_context.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/evaluation/evaluation_context.dart#L1) | `test/mathematical_core/evaluation/evaluation_context_test.dart` | **Verified against existing source code** (Context immutability, fork-on-write, and variable resolution verified). |
-| **Rational Arithmetic Preservation** (`FractionValue`, `BigInt`) | Sec 4.2 | [fraction_value.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/values/fraction_value.dart#L1) | `test/mathematical_core/values/fraction_value_test.dart` | **Verified against existing source code** (Arbitrary precision integer arithmetic and canonicalization verified). |
+| **AST Node Extension** (`UnitExpressionNode`, `ConvertedQuantityNode`) | Sec 4.1 | [expression_node.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/expression/ast/expression_node.dart#L1) | `test/mathematical_core/parser/ast_test.dart` | **Verified against existing source code** (Base AST hierarchy verified; node classes to be extended in Phase 11). |
+| **Error Hierarchy Integration** (6 `MathError` subclasses) | Sec 4.7 | [math_error.dart](file:///d:/Programming%20projects/nexa_math/lib/core/errors/math_error.dart#L1) | `test/mathematical_core/errors/math_error_test.dart` | **Verified against existing source code** (All base classes, recovery suggestions, and error codes inspected). |
+| **Warning Pipeline Integration** (3 `MathWarning` subclasses) | Sec 4.8 | [math_warning.dart](file:///d:/Programming%20projects/nexa_math/lib/core/result/math_warning.dart#L1) | `test/mathematical_core/errors/math_warning_test.dart` | **Verified against existing source code** (Warning emitter, listener contract, and severity levels inspected). |
+| **Evaluation Context Invariants** (Scoping, Unit Registry) | Sec 4.5 | [math_context.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/common/math_context.dart#L1) | `test/mathematical_core/evaluation/evaluation_context_test.dart` | **Verified against existing source code** (Context immutability, fork-on-write, and variable resolution verified). |
+| **Rational Arithmetic Preservation** (`FractionValue`, `BigInt`) | Sec 4.2 | [fraction_value.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/numeric/values/fraction_value.dart#L1) | `test/mathematical_core/values/fraction_value_test.dart` | **Verified against existing source code** (Arbitrary precision integer arithmetic and canonicalization verified). |
 | **7-Base Dimension Vector** ($L, M, T, I, \Theta, N, J$) | Sec 2.1 | `lib/mathematical_core/units/dimension.dart` | *None (Phase 11)* | **Verified only for internal specification consistency** (Mathematical Abelian group structure consistent). |
 | **SI / Non-SI Unit Registry** (Prefix trees, scale factors) | Sec 3.1–3.4 | `lib/mathematical_core/units/unit_registry.dart` | *None (Phase 11)* | **Verified only for internal specification consistency** (Table definitions, prefix multipliers consistent). |
 | **Runtime Dimensional Dimensional Analysis Engine** | Sec 5.1–5.4 | `lib/mathematical_core/units/unit_evaluator.dart` | *None (Phase 11)* | **Not yet verifiable because Phase 11 has not been implemented.** |
@@ -156,23 +156,23 @@ The British Thermal Unit (BTU) has multiple historical and empirical definitions
 
 ## 8. Status of Owner Decisions (`DEC-11-01` through `DEC-11-09`)
 
-As mandated by project rules, the auditing agent has **not approved, resolved, or altered** any of the nine architectural decisions. Their status remains strictly:
+As established in the authoritative project records:
+- **`DEC-11-01`**: The project owner approved **Option C** (`DimensionalExponent` dedicated wrapper type composing `FractionValue`) as the architectural direction ([`NEXAMATH_PHASE_11_DEC_11_01_ARCHITECTURAL_REVIEW.md`](file:///d:/Programming%20projects/nexa_math/NEXAMATH_PHASE_11_DEC_11_01_ARCHITECTURAL_REVIEW.md)). The detailed 1024-bit intermediate-arithmetic enforcement policy remains **OPEN — PENDING OWNER REVIEW**, and implementation remains **NOT AUTHORIZED**.
+- **`DEC-11-02` through `DEC-11-09`**: Remain **PROPOSED — PENDING OWNER APPROVAL**.
 
-```
-PROPOSED — PENDING OWNER APPROVAL
-```
+*(Note: Prior draft versions of this section inadvertently listed informal working titles. The table below restores the canonical decision titles and topics defined in Revision 5 §18 of the Phase 11 Specification).*
 
-| Decision ID | Summary of Architectural Proposal | Status |
+| Decision ID | Canonical Topic / Proposal (Revision 5 §18) | Current Status |
 | :--- | :--- | :--- |
-| `DEC-11-01` | Core vs. Optional Phase Scope (Full core inclusion vs. split plugin) | **PENDING OWNER APPROVAL** |
-| `DEC-11-02` | SI Base vs. Engineering Default Units | **PENDING OWNER APPROVAL** |
-| `DEC-11-03` | Temperature Difference ($\Delta\text{K}$) vs. Absolute Temperature ($\text{K}$) Type Separation | **PENDING OWNER APPROVAL** |
-| `DEC-11-04` | Parser Ambiguity: Implicit Multiplication vs. Compound Unit Tokenization | **PENDING OWNER APPROVAL** |
-| `DEC-11-05` | Maximum Denominator Bit-Length for Exact Rational Canonicalization (1024-bit bound) | **PENDING OWNER APPROVAL** |
-| `DEC-11-06` | Currency Units: Exclusion from Core Dimensional Analysis Engine | **PENDING OWNER APPROVAL** |
-| `DEC-11-07` | Metrological Standard for Empirical Energy Units (ISO 31-4 BTU vs. IT BTU) | **PENDING OWNER APPROVAL** |
-| `DEC-11-08` | Error Recovery Mode: Strict Exception vs. Warning with Value Propagation | **PENDING OWNER APPROVAL** |
-| `DEC-11-09` | Localization of Unit Names and Number Formatting Conventions | **PENDING OWNER APPROVAL** |
+| `DEC-11-01` | **Dimensional Exponent Representation** (`DimensionalExponent` wrapper composing `FractionValue`) | `DEC-11-01 ARCHITECTURAL DIRECTION: OPTION C APPROVED BY OWNER`<br>*(1024-Bit Policy: Open — Pending Owner Review; Implementation: Not Authorized)* |
+| `DEC-11-02` | **Quantity Hierarchy Placement** (Direct subtype of `MathValue`) | **PROPOSED — PENDING OWNER APPROVAL** |
+| `DEC-11-03` | **Affine Temperature Arithmetic Model** (`QuantityKind` distinction) | **PROPOSED — PENDING OWNER APPROVAL** |
+| `DEC-11-04` | **Expression Engine Integration Boundary** (Autonomous `UnitEngine` parser first) | **PROPOSED — PENDING OWNER APPROVAL** |
+| `DEC-11-05` | **Affine Transformation Formula** ($v_{\text{base}} = v \times \text{scale} + \text{offset}$) | **PROPOSED — PENDING OWNER APPROVAL** |
+| `DEC-11-06` | **Prefix Resolution Precedence** (Exact match first, then longest prefix) | **PROPOSED — PENDING OWNER APPROVAL** |
+| `DEC-11-07` | **Standard Catalog Physical Conventions** (Standardized BTU, calorie, hp, gallon, lb) | **PROPOSED — PENDING OWNER APPROVAL** |
+| `DEC-11-08` | **Negative Base Rational Powers** (Real branch evaluation with odd denominators) | **PROPOSED — PENDING OWNER APPROVAL** |
+| `DEC-11-09` | **Lexical Whitespace vs. Multiword Names** (Two-tier atomic resolution + composite parser) | **PROPOSED — PENDING OWNER APPROVAL** |
 
 ---
 

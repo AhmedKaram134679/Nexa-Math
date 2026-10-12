@@ -322,7 +322,7 @@ When implementation is authorized, the delivered code must verify:
 ```
 ════════════════════════════════════════════════════════════════════════════════
   DEC-11-01 ARCHITECTURAL DIRECTION: OPTION C APPROVED BY OWNER
-  1024-BIT ENFORCEMENT POLICY: OPEN — PENDING FOCUSED REVIEW
+  1024-BIT ENFORCEMENT POLICY: OPEN — PENDING OWNER REVIEW
   PHASE 11 IMPLEMENTATION STATUS: NOT AUTHORIZED
 ════════════════════════════════════════════════════════════════════════════════
 ```

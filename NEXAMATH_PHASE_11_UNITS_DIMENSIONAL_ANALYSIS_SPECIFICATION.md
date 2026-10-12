@@ -123,12 +123,12 @@ Therefore, a tuple of native Dart ints `(int, int)` **cannot** represent integer
    [`FractionValue`](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/numeric/values/fraction_value.dart).
    `FractionValue` is backed internally by Dart `BigInt` (both numerator and denominator), enforces $\text{denominator} > 0$, canonical reduction via $\gcd(|p|, q)$, and unique zero representation ($0/1$).
 2. **Dimension Exponent Type**:
-   Each base dimension exponent in `DimensionVector` is represented as an immutable canonical `FractionValue`.
-   Integer dimensions are created via `FractionValue.fromInts(p, 1)`.
-3. **Deterministic 1,024-Bit Resource Policy Definition**:
-   * **Scope**: Applies independently to the absolute numerator (`numerator.abs().bitLength`) and denominator (`denominator.bitLength`) of the canonicalized reduced rational exponent.
-   * **Evaluation Timing**: Checked after reduction and during intermediate arithmetic.
-   * **Deterministic Failure**: If any intermediate or canonicalized component exceeds 1,024 bits, the dimensional operation **aborts deterministically with `OverflowError`** (`lib/core/errors/math_error.dart`). It does **not** convert to `DecimalValue`, and does **not** emit `PrecisionLossWarning`. Dimensional invariants must remain exact.
+   Under approved architectural direction **`DEC-11-01 (Option C)`**, dimensional exponents will be represented by a dedicated immutable domain wrapper type (e.g. `DimensionalExponent`) composing and reusing the repository's canonical `FractionValue`.
+   Integer dimensions are created via `FractionValue.fromInts(p, 1)` or `DimensionalExponent.fromInt(p)`.
+3. **Proposed 1,024-Bit Resource Policy Definition (Open — Pending Owner Review)**:
+   * **Scope**: Intended to apply independently to the absolute numerator (`numerator.abs().bitLength`) and denominator (`denominator.bitLength`) of the canonicalized reduced rational exponent.
+   * **Evaluation Timing**: Proposed to be checked after reduction and during intermediate arithmetic (detailed enforcement points pending focused owner review).
+   * **Deterministic Failure**: If any intermediate or canonicalized component exceeds 1,024 bits, the dimensional operation is specified to abort deterministically with `OverflowError` (`lib/core/errors/math_error.dart`) without converting to `DecimalValue` or emitting `PrecisionLossWarning`.
    * **Zero and Negative Values**: $0$ is canonicalized to $0/1$ (bit-length 0 and 1). Negative exponents have positive denominators with negative numerators (e.g. $-2/1$ has numerator bit-length 2).
 
 ### 4.3 `DimensionVector` Enforceable Construction Contract
@@ -861,7 +861,7 @@ Future Phase 11 implementation must satisfy the following formal mathematical in
 
 | Decision ID | Topic | Current Proposal | Mathematical & Architectural Implications | Evidence Needed | Remaining Ambiguity / Trade-Off | Recommended Decision | Status |
 |---|---|---|---|---|---|---|:---:|
-| **DEC-11-01** | **Dimensional Exponent Representation** | `FractionValue` (BigInt-backed) with canonical reduction $\gcd(|p|, q) == 1, q \ge 1$. | Eliminates 64-bit platform limitations of native Dart int; enforces 1,024-bit limits on Windows & Android; components $> 1024$ bits fail with `OverflowError`. | Code inspection of `lib/mathematical_core/numeric/values/fraction_value.dart`. | Reuses established repository rational model; slightly higher memory than raw 64-bit ints. | **Option B: FractionValue Exponents** | `PROPOSED — PENDING OWNER APPROVAL` |
+| **DEC-11-01** | **Dimensional Exponent Representation** | Dedicated immutable wrapper (`DimensionalExponent`) composing `FractionValue` (BigInt-backed) with canonical reduction $\gcd(|p|, q) == 1, q \ge 1$. | Provides domain type safety; eliminates 64-bit int limits; composed with `FractionValue`. Detailed 1,024-bit intermediate-arithmetic enforcement policy remains open pending owner review. | Code inspection of `lib/mathematical_core/numeric/values/fraction_value.dart` and `NEXAMATH_PHASE_11_DEC_11_01_ARCHITECTURAL_REVIEW.md`. | Reuses established repository rational model; implementation not authorized until full phase sign-off. | **Option C: Dedicated Wrapper (`DimensionalExponent`) Composing `FractionValue`** | `DEC-11-01 ARCHITECTURAL DIRECTION: OPTION C APPROVED BY OWNER`<br>*(1024-Bit Policy: Open — Pending Owner Review)* |
 | **DEC-11-02** | **Quantity Hierarchy Placement** | Direct subtype of `MathValue` (`final class Quantity extends MathValue`). | Non-scalar behavior preserved ($5\text{ m} + 3$ undefined). Compatible with unsealed `MathValue`. | Code inspection of `lib/mathematical_core/common/math_value.dart`. | Quantities cannot be passed directly where `ScalarValue` is strictly required. | **Option A: Direct subtype of MathValue** | `PROPOSED — PENDING OWNER APPROVAL` |
 | **DEC-11-03** | **Affine Temperature Arithmetic Model** | Formal `QuantityKind` distinguishing `ordinary`, `absoluteTemperature`, and `temperatureInterval`. | Prevents physical nonsense addition ($T_1 + T_2 \implies \text{DomainError}$); extracts differences as intervals ($T_1 - T_2 = \Delta T$). | Standard in scientific software (GNU Units, Modelica, F# Units). | Requires extra enum field inside `Quantity`. | **Option B: Formal QuantityKind Distinction** | `PROPOSED — PENDING OWNER APPROVAL` |
 | **DEC-11-04** | **Expression Engine Integration Boundary** | Autonomous `UnitEngine.parseQuantity` in Phase 11; defer Phase 3 `ExpressionParser` AST integration. | Protects sealed Phase 3 parser and 483 regression test baseline during Phase 11 development. | Expression engine tokenizer and parser contracts inspection. | Units cannot be entered in general mathematical expressions until Phase 11 integration bridge is built. | **Option B: Autonomous Unit Parser First** | `PROPOSED — PENDING OWNER APPROVAL` |
@@ -881,7 +881,8 @@ Phase 11 — Units & Dimensional Analysis
 Specification: REVISION 5
 Mathematical Consistency: VERIFIED & HARDENED
 Repository API Compatibility: AUDITED READ-ONLY WITH CODE EVIDENCE
-Decision Register: 9 PROPOSALS PENDING OWNER APPROVAL (DEC-11-01 through DEC-11-09)
+Architectural Direction: DEC-11-01 OPTION C APPROVED BY OWNER (1024-Bit Policy Open — Pending Owner Review)
+Decision Register: 8 PROPOSALS PENDING OWNER APPROVAL (DEC-11-02 through DEC-11-09)
 Implementation Status: NOT AUTHORIZED
 
 Status:
