@@ -40,7 +40,7 @@ The prior report reviewed the round-trip guarantee $\text{convert}(\text{convert
 Lossless identity is guaranteed if and only if **all** of the following four conditions are satisfied simultaneously:
 1. **Linear Units:** Both units $u_1$ and $u_2$ are linear (zero affine offset: $c_1 = 0$, $c_2 = 0$). Affine units (such as Celsius, Fahrenheit) require rational subtraction and addition; while theoretically exact over rationals, they are excluded from the simple scaling invariant.
 2. **Terminating Rational Scale Factors:** The scale factors $s_1, s_2 \in \mathbb{Q}$ are represented as exact `FractionValue` instances composed of arbitrary-precision `BigInt` numerators and denominators.
-3. **Complexity Ceiling Compliance:** The bit-lengths of numerators and denominators during cross-multiplication do not exceed the architectural limit of 1024 bits (`RationalCanonicalizer.maxBigIntBits`). If this threshold is exceeded, canonicalization falls back or throws `OverflowError`, breaking identity.
+3. **Complexity Ceiling Compliance:** In proposed Phase 11 specifications, numerator and denominator bit-lengths are proposed to be bounded by a 1024-bit architectural limit. (Note: The global 1024-bit rational enforcement policy remains open pending owner review; in existing code, a 1024-bit bound exists only as `maxRationalBitLength` within the Phase 10 probability helper). If such a threshold is exceeded and strictly enforced, canonicalization would terminate with `OverflowError`.
 4. **Zero Transcendental / Irrational Multipliers:** The conversion factor does not involve transcendental constants ($\pi$) or empirical non-rational measurements.
 
 ### 2.2 Unresolved & Approximate Conversions
@@ -81,11 +81,11 @@ This reconciliation confirms that the enumeration of **9 concrete error and warn
 
 ### 4.2 Enumerated Error Classes (6 Types)
 All 6 classes extend `MathError` ([math_error.dart](file:///d:/Programming%20projects/nexa_math/lib/core/errors/math_error.dart#L1-L150)):
-1. `DimensionMismatchError` — Thrown when incompatible dimensions are added, subtracted, or equated.
-2. `InvalidUnitError` — Thrown when an unrecognized unit symbol or invalid prefix is parsed.
+1. `DimensionMismatchError` — Defined in `lib/core/errors/math_error.dart` (L123–134) with fields `expectedDimension` and `actualDimension`. Existing usage is in vector engine (`default_vector_engine.dart`) and paired statistics (`paired_dataset.dart`) for vector/dataset length and matrix/vector shape mismatches. Proposed in Phase 11 for dimensional compatibility verification (planned).
+2. `InvalidUnitError` — Defined in `lib/core/errors/math_error.dart` (L137–145) with field `unit`. Currently has 0 references in `lib/` (verified via repository search). Proposed in Phase 11 for unrecognized unit symbols or invalid prefix errors (planned).
 3. `DomainError` — Reused from existing core; thrown on non-linear or illegal unit operations.
 4. `DivisionByZeroError` — Reused from existing core; thrown when scaling denominator resolves to zero.
-5. `OverflowError` — Reused from existing core; thrown when BigInt fraction bit-length exceeds 1024 bits.
+5. `OverflowError` — Reused from existing core; proposed in Phase 11 for dimensional exponent / BigInt rational limit violations (1024-bit policy open pending owner review).
 6. `SyntaxError` — Reused from existing core; thrown on malformed compound unit expressions.
 
 ### 4.3 Enumerated Warning Classes (3 Types)
