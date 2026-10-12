@@ -58,8 +58,8 @@ The following matrix provides comprehensive traceability linking every material 
 | Claim / Subsystem | Spec Section | Target / Existing Source File | Baseline Test Reference | Verification Status |
 | :--- | :--- | :--- | :--- | :--- |
 | **AST Node Extension** (`UnitExpressionNode`, `ConvertedQuantityNode`) | Sec 4.1 | [expression_node.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/expression/ast/expression_node.dart#L1) | `test/mathematical_core/parser/ast_test.dart` | **Verified against existing source code** (Base AST hierarchy verified; node classes to be extended in Phase 11). |
-| **Error Hierarchy Integration** (6 `MathError` subclasses) | Sec 4.7 | [math_error.dart](file:///d:/Programming%20projects/nexa_math/lib/core/errors/math_error.dart#L1) | `test/mathematical_core/errors/math_error_test.dart` | **Verified against existing source code** (All base classes, recovery suggestions, and error codes inspected). |
-| **Warning Pipeline Integration** (3 `MathWarning` subclasses) | Sec 4.8 | [math_warning.dart](file:///d:/Programming%20projects/nexa_math/lib/core/result/math_warning.dart#L1) | `test/mathematical_core/errors/math_warning_test.dart` | **Verified against existing source code** (Warning emitter, listener contract, and severity levels inspected). |
+| **Error Hierarchy Integration** (6 `MathError` subclasses) | Sec 4.7 | [math_error.dart](file:///d:/Programming%20projects/nexa_math/lib/core/errors/math_error.dart#L1) | `test/core/math_error_test.dart` | **Verified against existing source code** (All base classes, recovery suggestions, and error codes inspected). |
+| **Warning Pipeline Integration** (Selected Phase 11 subset of 3 `MathWarning` subclasses) | Sec 4.8 | [math_warning.dart](file:///d:/Programming%20projects/nexa_math/lib/core/result/math_warning.dart#L1) | `test/core/calculation_metadata_test.dart` | **Verified against existing source code** (Base warning hierarchy, codes, messages, and metadata inspected; full repository defines 6 `MathWarning` classes). |
 | **Evaluation Context Invariants** (Scoping, Unit Registry) | Sec 4.5 | [math_context.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/common/math_context.dart#L1) | `test/mathematical_core/evaluation/evaluation_context_test.dart` | **Verified against existing source code** (Context immutability, fork-on-write, and variable resolution verified). |
 | **Rational Arithmetic Preservation** (`FractionValue`, `BigInt`) | Sec 4.2 | [fraction_value.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/numeric/values/fraction_value.dart#L1) | `test/mathematical_core/values/fraction_value_test.dart` | **Verified against existing source code** (Arbitrary precision integer arithmetic and canonicalization verified). |
 | **7-Base Dimension Vector** ($L, M, T, I, \Theta, N, J$) | Sec 2.1 | `lib/mathematical_core/units/dimension.dart` | *None (Phase 11)* | **Verified only for internal specification consistency** (Mathematical Abelian group structure consistent). |
@@ -72,29 +72,37 @@ The following matrix provides comprehensive traceability linking every material 
 
 ## 4. Error and Warning Inventory Reconciliation
 
-### 4.1 Resolution of Discrepancy
+### 4.1 Resolution of Discrepancy & Inventory Scope
 In the prior audit report:
 - Section 1 (Executive Summary) referenced *"eight mapped error/warning types"*.
 - Section 10 (API Compatibility Matrix) enumerated **9 concrete types** (6 errors + 3 warnings).
 
-This reconciliation confirms that the enumeration of **9 concrete error and warning types** is the exact, authoritative count supported by the inspected source code and specification:
+This reconciliation clarifies that the count of **9 concrete types** represents a **selected Phase 11 diagnostic subset** (6 `MathError` subclasses + 3 `MathWarning` subclasses) specified for the proposed unit and dimensional analysis subsystem, rather than the complete inventory of error or warning types across the repository.
 
-### 4.2 Enumerated Error Classes (6 Types)
+### 4.2 Enumerated Error Classes (6-Type Phase 11 Mapped Subset)
 All 6 classes extend `MathError` ([math_error.dart](file:///d:/Programming%20projects/nexa_math/lib/core/errors/math_error.dart#L1-L150)):
-1. `DimensionMismatchError` — Defined in `lib/core/errors/math_error.dart` (L123–134) with fields `expectedDimension` and `actualDimension`. Existing usage is in vector engine (`default_vector_engine.dart`) and paired statistics (`paired_dataset.dart`) for vector/dataset length and matrix/vector shape mismatches. Proposed in Phase 11 for dimensional compatibility verification (planned).
-2. `InvalidUnitError` — Defined in `lib/core/errors/math_error.dart` (L137–145) with field `unit`. Currently has 0 references in `lib/` (verified via repository search). Proposed in Phase 11 for unrecognized unit symbols or invalid prefix errors (planned).
-3. `DomainError` — Reused from existing core; thrown on non-linear or illegal unit operations.
-4. `DivisionByZeroError` — Reused from existing core; thrown when scaling denominator resolves to zero.
-5. `OverflowError` — Reused from existing core; proposed in Phase 11 for dimensional exponent / BigInt rational limit violations (1024-bit policy open pending owner review).
-6. `SyntaxError` — Reused from existing core; thrown on malformed compound unit expressions.
+1. `DimensionMismatchError` — **Defined** in `lib/core/errors/math_error.dart` (L123–134) with fields `expectedDimension` and `actualDimension`. **Verified usage** in existing production code is in the vector engine (`default_vector_engine.dart`) for geometric dimension consistency and in paired statistics (`paired_dataset.dart`) for sample array length consistency. **Proposed/Intended Phase 11 usage**: planned for physical-quantity dimensional incompatibility verification; unit-engine behavior is **not verified in current implementation** as no physical unit engine exists.
+2. `InvalidUnitError` — **Defined** in `lib/core/errors/math_error.dart` (L137–145) with field `unit`. **Verified usage**: 0 production call sites in `lib/` (verified via repository search; instantiated only in `test/core/math_error_test.dart`). **Proposed/Intended Phase 11 usage**: planned for unrecognized unit symbols or invalid prefix errors; unit-engine behavior is **not verified in current implementation**.
+3. `DomainError` — **Defined** in `lib/core/errors/math_error.dart` (L19–30). **Verified usage** exists extensively across algebraic, numeric, and probability subsystems. **Proposed/Intended Phase 11 usage**: proposed for non-linear or illegal unit operations (such as adding absolute temperatures or taking roots of incompatible quantities); unit-engine behavior is **not verified in current implementation**.
+4. `DivisionByZeroError` — **Defined** in `lib/core/errors/math_error.dart` (L9–16). **Verified usage** exists across core arithmetic and numeric operations. **Proposed/Intended Phase 11 usage**: proposed for scaling denominator resolving to zero during conversions; unit-engine behavior is **not verified in current implementation**.
+5. `OverflowError` — **Defined** in `lib/core/errors/math_error.dart` (L33–42). **Verified usage** exists in core numeric operations. **Proposed/Intended Phase 11 usage**: proposed for dimensional exponent / BigInt rational limit violations (1024-bit policy remains open pending owner review); unit-engine behavior is **not verified in current implementation**.
+6. `SyntaxError` — **Defined** in `lib/core/errors/math_error.dart` (L63–74). **Verified usage** exists in expression parsing. **Proposed/Intended Phase 11 usage**: proposed for malformed compound unit expressions in the future unit parser; unit-engine behavior is **not verified in current implementation**.
 
-### 4.3 Enumerated Warning Classes (3 Types)
-All 3 classes extend `MathWarning` ([math_warning.dart](file:///d:/Programming%20projects/nexa_math/lib/core/result/math_warning.dart#L1-L85)):
-1. `PrecisionLossWarning` — Emitted when conversion scales down to fixed-precision float representation.
-2. `NumericalApproximationWarning` — Emitted when irrational conversion factors (e.g. $\pi$) are approximated.
-3. `UnitConversionWarning` — Emitted on subtle conversions or ambiguous compound notations (e.g., legacy prefixes).
+### 4.3 Enumerated Warning Classes: Selected Phase 11 Subset vs. Complete Repository Inventory
+In [`lib/core/result/math_warning.dart`](file:///d:/Programming%20projects/nexa_math/lib/core/result/math_warning.dart#L1-L59), the complete repository inventory defines **6 concrete warning types**:
+1. `PrecisionLossWarning` (L16–21)
+2. `NearZeroWarning` (L24–29)
+3. `NumericalApproximationWarning` (L32–37)
+4. `ConvergenceWarning` (L40–45)
+5. `UnitConversionWarning` (L48–53)
+6. `GenericMathWarning` (L56–58)
 
-**Reconciliation Verdict:** The textual reference to "eight" in the executive summary of the previous report was an editorial miscount; the detailed inventory of **9 types (6 errors + 3 warnings)** is the exact, verified truth.
+The Phase 11 specification maps a **selected subset of 3 warning types** relevant to unit and dimensional computation:
+1. `PrecisionLossWarning` — **Defined** in `lib/core/result/math_warning.dart`. **Proposed/Intended Phase 11 usage**: proposed for conversions scaling down to fixed-precision representations; unit-engine emission is **not verified in current implementation**.
+2. `NumericalApproximationWarning` — **Defined** in `lib/core/result/math_warning.dart`. **Proposed/Intended Phase 11 usage**: proposed for irrational conversion factors (e.g. $\pi$); unit-engine emission is **not verified in current implementation**.
+3. `UnitConversionWarning` — **Defined** in `lib/core/result/math_warning.dart`. **Verified usage**: 0 production call sites in `lib/` (instantiated in `test/core/calculation_metadata_test.dart`). **Proposed/Intended Phase 11 usage**: proposed for conversions with subtle precision or legacy prefix implications; unit-engine emission is **not verified in current implementation**.
+
+**Reconciliation Verdict:** The textual reference to "eight" in the executive summary of the previous report was an editorial miscount; the detailed inventory of **9 types (6 errors + 3 warnings)** represents the **selected Phase 11 diagnostic subset**, not the exhaustive error or warning count of the entire repository (which defines at least 29 `MathError` subclasses and 6 `MathWarning` subclasses). Runtime usage of these types within a physical-unit engine remains strictly **proposed and not implemented**.
 
 ---
 
