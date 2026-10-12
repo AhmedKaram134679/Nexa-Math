@@ -7,7 +7,7 @@
 **Target Topic:** `DEC-11-01 — Dimensional Exponent Representation`  
 **Authoritative Specification Target:** [`NEXAMATH_PHASE_11_UNITS_DIMENSIONAL_ANALYSIS_SPECIFICATION.md`](file:///d:/Programming%20projects/nexa_math/NEXAMATH_PHASE_11_UNITS_DIMENSIONAL_ANALYSIS_SPECIFICATION.md), Revision 5  
 **Architectural Decision Status:** `DEC-11-01 ARCHITECTURAL DIRECTION: OPTION C APPROVED BY OWNER`  
-**Resource Bound Status:** `1024-BIT ENFORCEMENT POLICY: OPEN — PENDING FOCUSED REVIEW`  
+**Resource Bound Status:** `1024-BIT ENFORCEMENT POLICY: OPEN — PENDING OWNER REVIEW`  
 **Execution Context:** Architectural Decision Record & Analysis (Phase 11 Implementation Not Authorized)  
 
 ---
@@ -44,7 +44,7 @@ The central inquiry of DEC-11-01 is how physical dimension exponents across the 
   - **Scope of Approval:** Establishes `DimensionalExponent` as the domain-specific exponent abstraction composing `FractionValue` with domain type separation and reuse of existing canonical reduction.
   - **Open Reservation:** The detailed algorithmic enforcement strategy for the 1,024-bit intermediate-arithmetic bound is **not finalized** and is reserved for separate focused review.
 - **Decision Status:** `DEC-11-01 ARCHITECTURAL DIRECTION: OPTION C APPROVED BY OWNER`
-- **Resource Bound Policy:** `1024-BIT ENFORCEMENT POLICY: OPEN — PENDING FOCUSED REVIEW`
+- **Resource Bound Policy:** `1024-BIT ENFORCEMENT POLICY: OPEN — PENDING OWNER REVIEW`
 - **Implementation Gate:** `PHASE 11 IMPLEMENTATION STATUS: NOT AUTHORIZED`
 
 ---
