@@ -80,7 +80,7 @@ In the prior audit report:
 This reconciliation confirms that the enumeration of **9 concrete error and warning types** is the exact, authoritative count supported by the inspected source code and specification:
 
 ### 4.2 Enumerated Error Classes (6 Types)
-All 6 classes extend `MathError` ([math_error.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/errors/math_error.dart#L1-L120)):
+All 6 classes extend `MathError` ([math_error.dart](file:///d:/Programming%20projects/nexa_math/lib/core/errors/math_error.dart#L1-L150)):
 1. `DimensionMismatchError` — Thrown when incompatible dimensions are added, subtracted, or equated.
 2. `InvalidUnitError` — Thrown when an unrecognized unit symbol or invalid prefix is parsed.
 3. `DomainError` — Reused from existing core; thrown on non-linear or illegal unit operations.
@@ -89,7 +89,7 @@ All 6 classes extend `MathError` ([math_error.dart](file:///d:/Programming%20pro
 6. `SyntaxError` — Reused from existing core; thrown on malformed compound unit expressions.
 
 ### 4.3 Enumerated Warning Classes (3 Types)
-All 3 classes extend `MathWarning` ([math_warning.dart](file:///d:/Programming%20projects/nexa_math/lib/mathematical_core/errors/math_warning.dart#L1-L85)):
+All 3 classes extend `MathWarning` ([math_warning.dart](file:///d:/Programming%20projects/nexa_math/lib/core/result/math_warning.dart#L1-L85)):
 1. `PrecisionLossWarning` — Emitted when conversion scales down to fixed-precision float representation.
 2. `NumericalApproximationWarning` — Emitted when irrational conversion factors (e.g. $\pi$) are approximated.
 3. `UnitConversionWarning` — Emitted on subtle conversions or ambiguous compound notations (e.g., legacy prefixes).
